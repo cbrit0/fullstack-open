@@ -1,5 +1,5 @@
-export const Display = ({ country }) => {
-  if (country === null) {
+export const Display = ({ country, weather }) => {
+  if (country === null || weather === null) {
     return null;
   }
 
@@ -19,7 +19,14 @@ export const Display = ({ country }) => {
       </div>
       <img
         src={country.flags.svg}
-        style={{ width: '200px', height: '200px' }} />
+        style={{ width: '200px', height: '200px' }}
+      />
+      <div>
+        <h2>Weather in {country.capital.toString()}</h2>
+        <p>temperature {weather.current.temp} Celcius</p>
+        <img src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} />
+        <p>wind {weather.current.wind_speed}</p>
+      </div>
     </div>
   );
 };

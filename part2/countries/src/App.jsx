@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import countryService from './services/countries'
+import weatherService from './services/weather'
 import axios from 'axios'
 import { CountryList, Display } from './components/Country'
 
@@ -8,6 +9,7 @@ function App() {
   const [countries, setCountries] = useState([])
   const [filteredCountries, setFilteredCountries] = useState([])
   const [country, setCountry] = useState(null)
+  const [weather, setWeather] = useState(null)
 
   const handleChange = (event) => {
     setValue(event.target.value)
@@ -39,6 +41,14 @@ function App() {
     }
   }, [filteredCountries])
 
+  useEffect(() => {
+    if (country) {
+      weatherService
+        .getWeather(country.latlng[0], country.latlng[1])
+        .then(response => setWeather(response.data))
+    }
+  }, [country])
+
   return (
     <>
       <form>
@@ -48,7 +58,7 @@ function App() {
         filteredCountries={filteredCountries}
         handleCountryClick={handleCountryClick}
       />
-      <Display country={country} />
+      <Display country={country} weather={weather} />
     </>
   )
 }
