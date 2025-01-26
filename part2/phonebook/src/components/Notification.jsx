@@ -1,6 +1,6 @@
-export const Notification = ({ message }) => {
+export const Notification = ({ message, error }) => {
   const notificationStyle = {
-    color: 'green',
+    color: error ? 'red' : 'green',
     background: 'lightgrey',
     fontSize: '20px',
     borderStyle: 'solid',
