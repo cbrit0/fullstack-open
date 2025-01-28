@@ -78,6 +78,58 @@ test('defaults likes to 0 if likes property is missing', async () => {
   assert.strictEqual(savedBlog.likes, 0)
 })
 
+describe('validation for creating a new blog', () => {
+  test('fails with status code 400 if title is missing', async () => {
+    const newBlog = {
+      author: 'Test Author',
+      url: 'https://example.com/blog-without-title',
+      likes: 3,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
+  test('fails with status code 400 if url is missing', async () => {
+    const newBlog = {
+      title: 'Blog Without URL',
+      author: 'Test Author',
+      likes: 3,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
+  test('fails with status code 400 if both title and url are missing', async () => {
+    const newBlog = {
+      author: 'Test Author',
+      likes: 3,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
