@@ -58,6 +58,26 @@ test('a valid blog can be added', async () => {
   assert(titles.includes('this is a title'))
 })
 
+test('defaults likes to 0 if likes property is missing', async () => {
+  const newBlog = {
+    title: 'Blog Without Likes',
+    author: 'Test Author',
+    url: 'https://example.com/blog-without-likes',
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+
+  const savedBlog = blogsAtEnd.find((blog) => blog.id === response.body.id)
+  assert.strictEqual(savedBlog.likes, 0)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
