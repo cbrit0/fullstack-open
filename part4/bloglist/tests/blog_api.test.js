@@ -130,6 +130,29 @@ describe('validation for creating a new blog', () => {
   })
 })
 
+describe('deleting a blog', () => {
+  test('succeeds with status 204 if blog exists', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  })
+
+  test('fails with status 204 if blog does not exist', async () => {
+    const nonExistentId = await helper.nonExistingId()
+
+    await api
+      .delete(`/api/blogs/${nonExistentId}`)
+      .expect(204)
+  })
+})
+
+
 after(async () => {
   await mongoose.connection.close()
 })
