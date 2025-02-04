@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,6 +15,8 @@ const App = () => {
   const [author, setAuthor] = useState('')
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
+
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -46,7 +49,9 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
+      setMessage('wrong username or password')
       setTimeout(() => {
+        setMessage(null)
       }, 5000)
     }
   }
@@ -65,12 +70,18 @@ const App = () => {
         setAuthor('')
         setTitle('')
         setUrl('')
+        setMessage(`a new blog ${title} by ${author} added`)
+        setTimeout(() => setMessage(null), 5000)
       })
-      .catch(error => console.log(error))
+      .catch(error => {
+        setMessage(`error adding blog`)
+        setTimeout(() => setMessage(null), 5000)
+      })
   }
 
   return (
     <div>
+      <Notification message={message} />
       {user === null ? (
         <div>
           <h2>log in to application</h2>
