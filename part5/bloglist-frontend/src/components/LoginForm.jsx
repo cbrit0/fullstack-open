@@ -1,11 +1,19 @@
-const LoginForm = (props) => {
-  const { 
-    username, 
-    password, 
-    setUsername,
-    setPassword,
-    handleLogin
-  } = props
+import { useState } from "react"
+
+const LoginForm = ({ login }) => {
+  const [username, setUsername] = useState('') 
+  const [password, setPassword] = useState('')
+
+  const handleLogin = (event) => {
+    event.preventDefault()
+    login({
+      username,
+      password
+    })
+
+    setUsername('')
+    setPassword('')
+  }
 
   return (
     <form onSubmit={handleLogin}>

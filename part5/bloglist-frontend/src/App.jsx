@@ -9,8 +9,6 @@ import Togglable from './components/Toggable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const [message, setMessage] = useState(null)
@@ -30,27 +28,20 @@ const App = () => {
     }
   }, [])
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      const user = await loginService.login({
-        username, password,
+  const handleLogin = (credentials) => {
+    loginService
+      .login(credentials)
+      .then(user => {
+        window.localStorage.setItem(
+          'loggedBloglistUser', JSON.stringify(user)
+        )
+        blogService.setToken(user.token)
+        setUser(user)
       })
-
-      window.localStorage.setItem(
-        'loggedBloglistUser', JSON.stringify(user)
-      )
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      setMessage('wrong username or password')
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-    }
+      .catch(() => {
+        setMessage('wrong username or password')
+      })
+    setTimeout(() => setMessage(null), 5000)
   }
 
   const handleLogout = () => {
@@ -75,32 +66,22 @@ const App = () => {
 
   const blogFormRef = useRef()
 
-  const blogForm = () => (
-    <Togglable buttonLabel='new blog' ref={blogFormRef}>
-      <BlogForm createBlog={addBlog} />
-    </Togglable>
-  )
-
   return (
     <div>
       <Notification message={message} />
       {user === null ? (
         <div>
           <h2>log in to application</h2>
-          <LoginForm
-            username={username}
-            password={password}
-            setUsername={setUsername}
-            setPassword={setPassword}
-            handleLogin={handleLogin} 
-          />
+          <LoginForm login={handleLogin} />
         </div>
       ) : (
         <div>
           <h2>blogs</h2>
           <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
           <h2>create new</h2>
-          {blogForm()}
+          <Togglable buttonLabel='new blog' ref={blogFormRef}>
+            <BlogForm createBlog={addBlog} />
+          </Togglable>
           {blogs.map(blog =>
             <Blog key={blog.id} blog={blog} />
           )}
