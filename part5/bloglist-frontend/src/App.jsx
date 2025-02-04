@@ -66,6 +66,19 @@ const App = () => {
 
   const blogFormRef = useRef()
 
+  const likeBlog = (blog) => {
+    blogService
+      .update(blog.id, { ...blog, likes: blog.likes + 1, user: blog.user.id})
+      .then(returnedBlog => {
+        setBlogs(blogs.map(b => b.id === blog.id ? { ...returnedBlog, user: blog.user }: b))
+        setMessage(`${returnedBlog.title} by ${returnedBlog.author} liked`)
+      })
+      .catch(() => {
+        setMessage('error updating blog')
+      })
+    setTimeout(() => setMessage(null), 5000)
+  }
+
   return (
     <div>
       <Notification message={message} />
@@ -83,7 +96,7 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
           )}
         </div>
       )}

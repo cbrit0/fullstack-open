@@ -1,6 +1,6 @@
-import { useState, forwardRef } from "react"
+import { useState } from "react"
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -26,7 +26,7 @@ const Blog = ({ blog }) => {
       <div style={showWhenVisible}>
         {blog.title} {blog.author} <button onClick={toggleVisibility}>hide</button><br/>
         {blog.url}<br/>
-        likes {blog.likes}<br/>
+        likes {blog.likes} <button onClick={() => likeBlog(blog)}>like</button><br/>
         {blog.user?.name}
       </div>
     </div>
