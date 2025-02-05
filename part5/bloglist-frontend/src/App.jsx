@@ -16,7 +16,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.sort((a, b) => b.likes - a.likes) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const App = () => {
         setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       })
       .catch(() => {
-        setMessage(`error adding blog`)
+        setMessage('error adding blog')
       })
     setTimeout(() => setMessage(null), 5000)
   }
@@ -68,7 +68,7 @@ const App = () => {
 
   const likeBlog = (blog) => {
     blogService
-      .update(blog.id, { ...blog, likes: blog.likes + 1, user: blog.user.id})
+      .update(blog.id, { ...blog, likes: blog.likes + 1, user: blog.user.id })
       .then(returnedBlog => {
         setBlogs(blogs.map(b => b.id === blog.id ? { ...returnedBlog, user: blog.user }: b))
         setMessage(`${returnedBlog.title} by ${returnedBlog.author} liked`)
@@ -110,11 +110,11 @@ const App = () => {
           </Togglable>
           {blogs.map(blog =>
             <Blog
-              key={blog.id} 
-              blog={blog} 
+              key={blog.id}
+              blog={blog}
               user={user}
-              likeBlog={likeBlog} 
-              deleteBlog={deleteBlog} 
+              likeBlog={likeBlog}
+              deleteBlog={deleteBlog}
             />
           )}
         </div>

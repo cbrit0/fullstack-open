@@ -1,7 +1,7 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const LoginForm = ({ login }) => {
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleLogin = (event) => {
@@ -19,7 +19,7 @@ const LoginForm = ({ login }) => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -28,7 +28,7 @@ const LoginForm = ({ login }) => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -36,7 +36,7 @@ const LoginForm = ({ login }) => {
         />
       </div>
       <button type="submit">login</button>
-    </form>      
+    </form>
   )
 }
 
