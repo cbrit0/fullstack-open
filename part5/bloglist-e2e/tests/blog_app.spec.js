@@ -64,5 +64,19 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'like' }).click()
       await expect(detailsLocator).toContainText('likes 1')
     })
+
+    test('the user who added the blog can delete it', async ({ page }) => {
+      await createBlog(page, 'Playwright', 'testing blog', 'https://playwright.dev/')
+
+      await page.getByRole('button', { name: 'view' }).click()
+      await page.getByRole('button', { name: 'remove' }).click()
+      
+      page.once('dialog', async (dialog) => {
+        expect(dialog.message()).toContain('Remove blog testing blog by Playwright?')
+        await dialog.accept()
+      })
+
+      await expect(page.getByText('testing blog Playwright').first()).not.toBeVisible()
+    })
   })
 })
