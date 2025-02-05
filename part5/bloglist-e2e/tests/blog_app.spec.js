@@ -11,6 +11,13 @@ describe('Blog app', () => {
         password: 'salainen'
       }
     })
+    await request.post('/api/users', {
+      data: {
+        name: 'Lauri Markkanen',
+        username: 'lmarkkanen',
+        password: 'salainen'
+      }
+    })
 
     await page.goto('/')
   })
@@ -77,6 +84,21 @@ describe('Blog app', () => {
       })
 
       await expect(page.getByText('testing blog Playwright').first()).not.toBeVisible()
+    })
+
+    test('only the user who created the blog sees the delete button', async ({ page }) => {
+      await createBlog(page, 'Playwright', 'testing blog', 'https://playwright.dev/')
+
+      await page.getByRole('button', { name: 'view' }).click()
+      await expect(page.getByRole('button', { name: 'remove' })).toBeVisible()
+
+      await page.getByRole('button', { name: 'logout' }).click()
+
+      await loginWith(page, 'lmarkkanen', 'salainen')
+
+      await page.getByRole('button', { name: 'view' }).click()
+
+      await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
     })
   })
 })
