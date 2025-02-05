@@ -21,8 +21,6 @@ describe('Blog component', () => {
   })
 
   test('shows URL and number of likes when the "View" button is clicked', async () => {
-    const mockHandler = vi.fn()
-
     render(<Blog blog={blog} user={{ username: 'testuser' }} likeBlog={(blog) => {}} deleteBlog={(blog) => {}} />)
 
     expect(screen.queryByText('https://test.com')).toBeNull()
@@ -34,5 +32,20 @@ describe('Blog component', () => {
 
     expect(screen.queryByText('https://test.com')).toBeDefined()
     expect(screen.queryByText('likes 5')).toBeDefined()
+  })
+
+  test('calls the like event handler twice when the like button is clicked twice', async () => {
+    const mockLikeHandler = vi.fn()
+    render(<Blog blog={blog} user={{ username: 'testuser' }} likeBlog={mockLikeHandler} deleteBlog={(blog) => {}} />)
+
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    await user.click(button)
+
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+
+    expect(mockLikeHandler.mock.calls).toHaveLength(2)
   })
 })
