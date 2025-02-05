@@ -27,16 +27,16 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
   const user = request.user
 
-  const blog = Blog.findById(request.params.id)
+  const blog = await Blog.findById(request.params.id)
   if (!blog) {
     return response.status(204).json({ error: 'blog not found' });
   }
 
-  if (blog.user.toString() !== user.id.toString()) {
+  if (blog.user.toString() !== user._id.toString()) {
     return response.status(403).json({ error: 'unauthorized: only the creator can delete this blog' });
   }
 
-  await Blog.findByIdAndDelete(id);
+  await Blog.findByIdAndDelete(request.params.id);
   response.status(204).end()
 })
 
