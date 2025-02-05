@@ -1,8 +1,9 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
+const { loginWith, createBlog } = require('./helper')
 
 describe('Blog app', () => {
   beforeEach(async ({ page, request }) => {
-    await request.post('/api/tests/reset')
+    await request.post('/api/testing/reset')
     await request.post('/api/users', {
       data: {
         name: 'Matti Luukkainen',
@@ -26,22 +27,30 @@ describe('Blog app', () => {
 
   describe('Login', () => {
     test('succeeds with correct credentials', async ({ page }) => {
-      await page.getByTestId('username').fill('mluukkai')
-      await page.getByTestId('password').fill('salainen')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'mluukkai', 'salainen')
 
       await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
     })
 
     test('fails with wrong credentials', async ({ page }) => {
-      await page.getByTestId('username').fill('mluukkai')
-      await page.getByTestId('password').fill('wrong')
-      await page.getByRole('button', { name: 'login' }).click()
+      await loginWith(page, 'mluukkai', 'wrong')
 
       const notificationDiv = await page.locator('.notification')
       await expect(notificationDiv).toContainText('wrong username or password')
 
       await expect(page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
+    })
+  })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page }) => {
+      await loginWith(page, 'mluukkai', 'salainen')
+    })
+  
+    test('a new blog can be created', async ({ page }) => {
+      await createBlog(page, 'Playwright', 'testing blog', 'https://playwright.dev/')
+
+      await expect(page.getByText('testing blog Playwright').first()).toBeVisible()
     })
   })
 })
