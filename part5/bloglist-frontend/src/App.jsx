@@ -79,6 +79,19 @@ const App = () => {
     setTimeout(() => setMessage(null), 5000)
   }
 
+  const deleteBlog = (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      blogService
+        .deleteBlog(blog.id)
+        .then(() => {
+          setBlogs(blogs.filter(b => b.id !== blog.id))
+          setMessage(`${blog.title} by ${blog.author} deleted`)
+        })
+        .catch(() => setMessage('error deleting blog'))
+      setTimeout(() => setMessage(null), 5000)
+    }
+  }
+
   return (
     <div>
       <Notification message={message} />
@@ -96,7 +109,12 @@ const App = () => {
             <BlogForm createBlog={addBlog} />
           </Togglable>
           {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} likeBlog={likeBlog}/>
+            <Blog
+              key={blog.id} 
+              blog={blog} 
+              likeBlog={likeBlog} 
+              deleteBlog={deleteBlog} 
+            />
           )}
         </div>
       )}
