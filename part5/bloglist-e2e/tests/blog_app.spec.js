@@ -100,5 +100,37 @@ describe('Blog app', () => {
 
       await expect(page.getByRole('button', { name: 'remove' })).not.toBeVisible()
     })
+
+    describe('when multiple blogs are created', () => {
+      beforeEach(async ({ page }) => {
+        test.setTimeout(10000);
+        await createBlog(page, 'Playwright', 'most liked blog', 'https://playwright.dev/')
+        await page.waitForTimeout(500);
+        await createBlog(page, 'Playwright', 'medium liked blog', 'https://playwright.dev/')
+        await page.waitForTimeout(500);
+        await createBlog(page, 'Playwright', 'least liked blog', 'https://playwright.dev/')
+        await page.waitForTimeout(500);
+      })
+
+      test('blogs are sorted by number of likes in descending order', async ({ page }) => {
+        const viewButtons = await page.getByRole('button', { name: 'view' }).all()
+
+        await viewButtons[0].click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await page.getByRole('button', { name: 'hide' }).click()
+        
+
+        await viewButtons[1].click()
+        await page.getByRole('button', { name: 'like' }).click()
+        await page.getByRole('button', { name: 'hide' }).click()
+
+        await page.getByRole('button', { name: 'logout' }).click()
+        await loginWith(page, 'mluukkai', 'salainen')
+
+        await expect(page.locator('.blog-title').first()).toContainText('most liked blog')
+        await expect(page.locator('.blog-title').last()).toContainText('least liked blog')
+      })
+    })
   })
 })
